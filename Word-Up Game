@@ -1,0 +1,149 @@
+# Project 01 - Word-Up/Scrabble Game
+
+# Function 1: Input Player Rounds
+def inputRounds():
+  inputMsg = "Rounds of Play: "
+  rounds = input(inputMsg)
+  try:
+    val = int(rounds)
+    return val
+  except:
+    val = 2
+    return val
+
+# Function 2: Input Player Word
+def inputWord(playerNum, currentWord, previousWord, player1):
+  inputMsg = ["Player", playerNum, 'Word: ']
+  currentWord = input(" ".join(inputMsg))
+  validation = validWord(currentWord, previousWord, player1)
+  if validation is False:
+    return validation
+  return currentWord
+
+# Function 3: Validate Word 
+def validWord(currentWord, previousWord, player1):
+  valid = False
+  if len(currentWord) > 0 and currentWord !=previousWord:
+    if len(player1) == 0:
+      valid = True
+    else:
+      for letter in currentWord:
+        if letter in previousWord:
+          valid = True
+  return valid
+  
+
+# Function 4: Generate Word Score 
+def playerScore(word,points):
+  score = 0
+  for letter in word:
+    try:
+      score += points[letter.lower()]
+    except:
+      score += 0
+  return score
+ 
+
+  
+# Method 5: Initialize List with Messages
+def initMessages():
+  messages = [
+    'Player {} Wins with a score of {}!',
+    'Tie Game, no winners.',
+    'Invalid word! Player {} Wins!',
+    'Invalid word! You must enter a valid word to start.',
+    'Player {} Entered the Words:'
+  ]
+  return messages
+
+# Function 6: Initialize Points Dictionary
+def initPoints():
+  points = {
+    "a": 1 , "b": 3 , "c": 3 , "d": 2 ,
+    "e": 1 , "f": 4 , "g": 2 , "h": 4 ,
+    "i": 1 , "j": 8 , "k": 5 , "l": 1 ,
+    "m": 3 , "n": 1 , "o": 1 , "p": 3 ,
+    "q": 10, "r": 1 , "s": 1 , "t": 1 ,
+    "u": 1 , "v": 4 , "w": 4 , "x": 8 ,
+    "y": 4 , "z": 10
+  }
+  return points
+#Function 7: Generate Total Score  
+def calculateScore(player1):
+  x = 0
+  totalScore = 0
+  while x < len(player1):
+    tempWord = player1[x]
+    wordScore = playerScore(tempWord,points)
+    totalScore += wordScore
+    x +=1
+  return totalScore
+  
+# Main Program
+if __name__ == '__main__':
+  # Initialize and Declare Variables
+  rounds = 2
+  score1 = 0
+  score2 = 0
+  points = initPoints()
+  messages = initMessages()
+  x = 0
+  y = 0
+  currentWord = " "
+  previousWord = " "
+  playerWord = " "
+    # Start Game Below
+    #Enter Number of Rounds
+  val = inputRounds()
+  playernum = ["1", "2"]
+  currPlayer = playernum[0]
+  
+  #Then Game starts
+  #Players enter words
+  val = int(val)
+  player1 = []
+  player2 = []
+  while x < val:
+    if y % 2 == 0:
+      # If Even, then its Player 1's turn
+      currPlayer = playernum[0]
+      validation = inputWord(currPlayer,currentWord, previousWord,player1)
+      if validation == False:
+        if x == 0:
+          print(messages[3])
+        else:
+          print(messages[2].format(2))
+        break
+      #when the word validation is True
+      previousWord = validation
+      player1 += [previousWord]
+      y = y + 1
+      continue
+      
+
+    #If odd then its Player 2's turn
+    else:
+      currPlayer = playernum[1]
+      validation = inputWord(currPlayer,currentWord, previousWord,player2)
+      if validation == False:
+        print(messages[2].format(1))
+        break
+      #while validation is True:
+      previousWord = validation
+      player2 += [previousWord]       
+      y= y + 1
+    #Next round
+    x += 1
+  #Game ended, now we have to calculate scores
+  score1 = calculateScore(player1)
+  score2 = calculateScore(player2)   
+  #print ("Player 1 Score: ",score1)
+  #print("Player 2 Score: ", score2)
+  if score1 > score2:
+     print(messages[0].format(1, score1))
+     print(messages[4].format(1), player1)
+  if score2 > score1:
+    print(messages[0].format(2, score2))
+    print(messages[4].format(2), player2)
+  if score1 == score2:
+    print(messages[1])
